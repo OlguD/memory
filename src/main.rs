@@ -29,5 +29,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     let insert_result = db.insert_project(&name, &path);
     println!("{:?}", insert_result);
 
+
+    let project = db.find_project_by_path(&path);
+    println!("{:?}", project);
+
+    let wrong_path = String::from("wrong_path");
+    let wrong_project = db.find_project_by_path(&wrong_path);
+    println!("{:?}", wrong_project);
+
     Ok(())
 }

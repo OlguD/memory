@@ -36,11 +36,10 @@ pub struct NewMemory {
 
 #[derive(Debug)]
 pub struct Project {
-    id: i64,
-    project_id: i64,
-    name: i64,
-    path: i64,
-    created_at: String,
+    pub id: i64,
+    pub name: String,
+    pub path: String, 
+    pub created_at: String,
 }
 
 
