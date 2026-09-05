@@ -48,7 +48,7 @@ memory add --kind decision "Using Traefik sticky sessions via cookie, not IP has
 memory add --kind bug      "Redis pool exhausted under load; pool size raised to 50"
 
 # Target another project explicitly
-memory add --project betcyp-cashier --kind note "..."
+memory add --project cashier --kind note "..."
 
 # Read back
 memory list
