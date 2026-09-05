@@ -18,30 +18,34 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     let db = Db::open(Path::new("memory.db"))?;
 
 
-    println!("{:#?}", new_memory);
-    new_memory.source.as_str();
-    println!("{:?}", Source::from_str("git"));
-    println!("{:?}", Source::from_str("xyz"));
-
-    println!("{:?}", db);
-
-    let name = String::from("memory_project_name"); 
-    let insert_result = db.insert_project(&name, &path);
-    println!("{:?}", insert_result);
-
+    // println!("{:#?}", new_memory);
+    // new_memory.source.as_str();
+    // println!("{:?}", Source::from_str("git"));
+    // println!("{:?}", Source::from_str("xyz"));
+    //
+    // println!("{:?}", db);
+    //
+    // let name = String::from("memory_project_name"); 
+    // let insert_result = db.insert_project(&name, &path);
+    // println!("{:?}", insert_result);
+    //
 
     let project = db.find_project_by_path(&path);
     println!("{:?}", project);
+    //
+    // let wrong_path = String::from("wrong_path");
+    // let wrong_project = db.find_project_by_path(&wrong_path);
+    // println!("{:?}", wrong_project);
 
-    let wrong_path = String::from("wrong_path");
-    let wrong_project = db.find_project_by_path(&wrong_path);
-    println!("{:?}", wrong_project);
-
-    let id = db.insert_memory(new_memory);
-    println!("{:?}", id);
-
+    // let id = db.insert_memory(new_memory);
+    // println!("{:?}", id);
+    //
     let memories: Vec<Memory> = db.list_memories(1)?;
     println!("{:?}", memories);
+
+    let query = String::from("content");
+    let search_result = db.search_memories(1, &query)?;
+    println!("{:?}", search_result);
 
     Ok(())
 }

@@ -76,6 +76,40 @@ impl Db {
 
         rows.collect()
     }
+
+    pub fn search_memories(&self, project_id: i64, query: &str) -> rusqlite::Result<Vec<Memory>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT m.id, m.project_id, m.source, m.source_ref, m.kind,
+             m.content, m.created_at, m.updated_at
+             FROM memories m
+             JOIN memories_fts f ON f.rowid = m.id
+             WHERE f.memories_fts MATCH ?1 AND m.project_id = ?2
+             ORDER BY f.rank"
+            )?;
+
+        let rows = stmt.query_map((query, project_id), |row| {
+            let kind_str: String = row.get(4)?;
+            let kind = Kind::from_str(&kind_str)
+                .ok_or(rusqlite::Error::InvalidQuery)?;
+
+            let source_str: String = row.get(2)?;
+            let source = Source::from_str(&source_str)
+                .ok_or(rusqlite::Error::InvalidQuery)?;
+
+            Ok(Memory {
+                id: row.get(0)?,
+                project_id: row.get(1)?,
+                source,
+                source_ref: row.get(3)?,
+                kind,
+                content: row.get(5)?,
+                created_at: row.get(6)?,
+                updated_at: row.get(7)?,
+            })
+        })?;
+
+        rows.collect()
+    }
 }
 
 
