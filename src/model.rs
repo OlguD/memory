@@ -14,14 +14,14 @@ pub enum Kind {
 
 #[derive(Debug)]
 pub struct Memory {
-    id: i64,
-    source: Source,
-    source_ref: Option<String>,
-    kind: Kind,
-    content: String,
-    project: i64,
-    created_at: String,
-    updated_at: String,
+    pub id: i64,
+    pub source: Source,
+    pub source_ref: Option<String>,
+    pub kind: Kind,
+    pub content: String,
+    pub project_id: i64,
+    pub created_at: String,
+    pub updated_at: String,
 }
 
 

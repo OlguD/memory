@@ -1,6 +1,10 @@
 use rusqlite::Connection;
 use std::path::Path;
 use crate::model::Project;
+use crate::model::NewMemory;
+use crate::model::Memory;
+use crate::model::Kind;
+use crate::model::Source;
 use rusqlite::OptionalExtension;
 
 #[derive(Debug)]
@@ -36,4 +40,42 @@ impl Db {
         ).optional()?;
         Ok(project)
     }
+
+    pub fn insert_memory(&self, new: NewMemory) -> rusqlite::Result<i64> { 
+        self.conn.execute("INSERT INTO memories (project_id, source, source_ref, kind, content) VALUES (?1, ?2, ?3, ?4, ?5)", (new.project_id, new.source.as_str(), new.source_ref, new.kind.as_str(), new.content))?;
+        Ok(self.conn.last_insert_rowid())
+    }
+
+    
+    pub fn list_memories(&self, project_id: i64) -> rusqlite::Result<Vec<Memory>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT id, project_id, source, source_ref, kind, content, created_at, updated_at
+             FROM memories WHERE project_id = ?1 ORDER BY created_at DESC"
+            )?;
+
+        let rows = stmt.query_map([project_id], |row| {
+            let kind_str: String = row.get(4)?;
+            let kind = Kind::from_str(&kind_str)
+                .ok_or(rusqlite::Error::InvalidQuery)?;
+
+            let source_str: String = row.get(2)?;
+            let source = Source::from_str(&source_str)
+                .ok_or(rusqlite::Error::InvalidQuery)?;
+
+            Ok(Memory {
+                id: row.get(0)?,
+                project_id: row.get(1)?,
+                source,
+                source_ref: row.get(3)?,
+                kind,
+                content: row.get(5)?,
+                created_at: row.get(6)?,
+                updated_at: row.get(7)?,
+            })
+        })?;
+
+        rows.collect()
+    }
 }
+
+

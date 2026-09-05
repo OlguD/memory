@@ -1,4 +1,4 @@
-use model::{NewMemory, Source, Kind};
+use model::{NewMemory, Source, Kind, Memory};
 use store::Db;
 use std::path::Path;
 
@@ -36,6 +36,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     let wrong_path = String::from("wrong_path");
     let wrong_project = db.find_project_by_path(&wrong_path);
     println!("{:?}", wrong_project);
+
+    let id = db.insert_memory(new_memory);
+    println!("{:?}", id);
+
+    let memories: Vec<Memory> = db.list_memories(1)?;
+    println!("{:?}", memories);
 
     Ok(())
 }
