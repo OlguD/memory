@@ -13,4 +13,9 @@ impl Db {
         conn.execute_batch(schema)?;
         Ok(Db {conn}) 
     }
+
+    pub fn insert_project(&self, name: &str, path: &str) -> rusqlite::Result<i64> {
+        self.conn.execute("INSERT INTO projects (name, path) VALUES (?1, ?2)", (name, path))?;
+        Ok(self.conn.last_insert_rowid())
+    }
 }

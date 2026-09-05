@@ -5,7 +5,7 @@ use std::path::Path;
 mod store;
 mod model;
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>>{
     let new_memory = NewMemory {
         source: Source::Manual,
         source_ref: None,
@@ -15,7 +15,7 @@ fn main() {
     };
     
     let path = "memory/memory/data";
-    let db = Db::open(Path::new("memory.db"));
+    let db = Db::open(Path::new("memory.db"))?;
 
 
     println!("{:#?}", new_memory);
@@ -24,4 +24,10 @@ fn main() {
     println!("{:?}", Source::from_str("xyz"));
 
     println!("{:?}", db);
+
+    let name = String::from("memory_project_name"); 
+    let insert_result = db.insert_project(&name, &path);
+    println!("{:?}", insert_result);
+
+    Ok(())
 }
