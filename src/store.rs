@@ -41,9 +41,40 @@ impl Db {
         Ok(project)
     }
 
+    pub fn find_project_by_name(&self, name: &str) -> rusqlite::Result<Option<Project>> {
+        let project = self.conn.query_row(
+            "SELECT id, name, path, created_at FROM projects WHERE name = ?1",
+            [name],
+            |row| {
+                Ok(Project {
+                    id: row.get(0)?,
+                    name: row.get(1)?,
+                    path: row.get(2)?,
+                    created_at: row.get(3)?,
+                })
+            }
+        ).optional()?;
+        Ok(project)
+    }
+
     pub fn insert_memory(&self, new: NewMemory) -> rusqlite::Result<i64> { 
         self.conn.execute("INSERT INTO memories (project_id, source, source_ref, kind, content) VALUES (?1, ?2, ?3, ?4, ?5)", (new.project_id, new.source.as_str(), new.source_ref, new.kind.as_str(), new.content))?;
         Ok(self.conn.last_insert_rowid())
+    }
+
+    pub fn update_memory(&self, id: i64, content: &str) -> rusqlite::Result<bool> {
+        let changed = self.conn.execute(
+            "UPDATE memories SET content = ?1, updated_at = datetime('now') WHERE id = ?2", (content, id)
+        )?;
+        Ok(changed > 0)
+    }
+
+    pub fn delete_memory(&self, id: i64) -> rusqlite::Result<bool> {
+        let changed = self.conn.execute(
+           "DELETE FROM memories WHERE id = ?1", (id,)
+        )?;
+
+        Ok(changed > 0)
     }
 
     

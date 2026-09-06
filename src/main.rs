@@ -4,6 +4,7 @@ use std::path::Path;
 
 mod store;
 mod model;
+mod project;
 
 fn main() -> Result<(), Box<dyn std::error::Error>>{
     let new_memory = NewMemory {
@@ -17,6 +18,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     let path = "memory/memory/data";
     let db = Db::open(Path::new("memory.db"))?;
 
+
+    println!("{:?}", project::resolve(&db, None)?);
 
     // println!("{:#?}", new_memory);
     // new_memory.source.as_str();
@@ -46,6 +49,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     let query = String::from("content");
     let search_result = db.search_memories(1, &query)?;
     println!("{:?}", search_result);
+    
+    let new_content = String::from("new content");
+    let update_result = db.update_memory(1, &new_content);
+    println!("{:?}", update_result);
+
+    let delete_result = db.delete_memory(1);
+    println!("{:?}", delete_result);
 
     Ok(())
 }
