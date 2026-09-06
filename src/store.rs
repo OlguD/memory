@@ -53,27 +53,7 @@ impl Db {
              FROM memories WHERE project_id = ?1 ORDER BY created_at DESC"
             )?;
 
-        let rows = stmt.query_map([project_id], |row| {
-            let kind_str: String = row.get(4)?;
-            let kind = Kind::from_str(&kind_str)
-                .ok_or(rusqlite::Error::InvalidQuery)?;
-
-            let source_str: String = row.get(2)?;
-            let source = Source::from_str(&source_str)
-                .ok_or(rusqlite::Error::InvalidQuery)?;
-
-            Ok(Memory {
-                id: row.get(0)?,
-                project_id: row.get(1)?,
-                source,
-                source_ref: row.get(3)?,
-                kind,
-                content: row.get(5)?,
-                created_at: row.get(6)?,
-                updated_at: row.get(7)?,
-            })
-        })?;
-
+        let rows = stmt.query_map([project_id], row_to_memory)?;
         rows.collect()
     }
 
@@ -87,29 +67,28 @@ impl Db {
              ORDER BY f.rank"
             )?;
 
-        let rows = stmt.query_map((query, project_id), |row| {
-            let kind_str: String = row.get(4)?;
-            let kind = Kind::from_str(&kind_str)
-                .ok_or(rusqlite::Error::InvalidQuery)?;
-
-            let source_str: String = row.get(2)?;
-            let source = Source::from_str(&source_str)
-                .ok_or(rusqlite::Error::InvalidQuery)?;
-
-            Ok(Memory {
-                id: row.get(0)?,
-                project_id: row.get(1)?,
-                source,
-                source_ref: row.get(3)?,
-                kind,
-                content: row.get(5)?,
-                created_at: row.get(6)?,
-                updated_at: row.get(7)?,
-            })
-        })?;
-
+        let rows = stmt.query_map((query, project_id), row_to_memory)?;
         rows.collect()
     }
 }
 
+fn row_to_memory(row: &rusqlite::Row) -> rusqlite::Result<Memory> {
+    let kind_str: String = row.get(4)?;
+    let kind = Kind::from_str(&kind_str)
+        .ok_or(rusqlite::Error::InvalidQuery)?;
 
+    let source_str: String = row.get(2)?;
+    let source = Source::from_str(&source_str)
+        .ok_or(rusqlite::Error::InvalidQuery)?;
+
+    Ok(Memory {
+        id: row.get(0)?,
+        project_id: row.get(1)?,
+        source,
+        source_ref: row.get(3)?,
+        kind,
+        content: row.get(5)?,
+        created_at: row.get(6)?,
+        updated_at: row.get(7)?,
+    })
+}
