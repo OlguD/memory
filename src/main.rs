@@ -1,61 +1,8 @@
-use model::{NewMemory, Source, Kind, Memory};
-use store::Db;
-use std::path::Path;
-
-mod store;
+mod cli;
 mod model;
 mod project;
+mod store;
 
-fn main() -> Result<(), Box<dyn std::error::Error>>{
-    let new_memory = NewMemory {
-        source: Source::Manual,
-        source_ref: None,
-        kind: Kind::Note,
-        content: String::from("Yeni content"),
-        project_id: 1
-    };
-    
-    let path = "memory/memory/data";
-    let db = Db::open(Path::new("memory.db"))?;
-
-
-    println!("{:?}", project::resolve(&db, None)?);
-
-    // println!("{:#?}", new_memory);
-    // new_memory.source.as_str();
-    // println!("{:?}", Source::from_str("git"));
-    // println!("{:?}", Source::from_str("xyz"));
-    //
-    // println!("{:?}", db);
-    //
-    // let name = String::from("memory_project_name"); 
-    // let insert_result = db.insert_project(&name, &path);
-    // println!("{:?}", insert_result);
-    //
-
-    let project = db.find_project_by_path(&path);
-    println!("{:?}", project);
-    //
-    // let wrong_path = String::from("wrong_path");
-    // let wrong_project = db.find_project_by_path(&wrong_path);
-    // println!("{:?}", wrong_project);
-
-    // let id = db.insert_memory(new_memory);
-    // println!("{:?}", id);
-    //
-    let memories: Vec<Memory> = db.list_memories(1)?;
-    println!("{:?}", memories);
-
-    let query = String::from("content");
-    let search_result = db.search_memories(1, &query)?;
-    println!("{:?}", search_result);
-    
-    let new_content = String::from("new content");
-    let update_result = db.update_memory(1, &new_content);
-    println!("{:?}", update_result);
-
-    let delete_result = db.delete_memory(1);
-    println!("{:?}", delete_result);
-
-    Ok(())
+fn main() -> rusqlite::Result<()>{
+    cli::run()
 }

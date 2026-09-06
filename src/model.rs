@@ -4,7 +4,7 @@ pub enum Source {
     Git
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, clap::ValueEnum)]
 pub enum Kind {
     Decision,
     Pattern,
