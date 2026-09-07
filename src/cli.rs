@@ -39,6 +39,10 @@ enum Command {
     Delete {
         id: i64,
     },
+    Export {
+        #[arg(long)]
+        project: Option<String>
+    }
 }
 
 pub fn run () -> rusqlite::Result<()> {
