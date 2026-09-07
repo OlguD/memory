@@ -76,9 +76,9 @@ Project resolution: `--project <name>` if given, otherwise walk up from the curr
 
 - [x] Data model (`model.rs`)
 - [x] Schema: `projects`, `memories`, FTS5 index, sync triggers
-- [ ] Store: open, migrate, CRUD, search (`store.rs`)
-- [ ] Project resolution from working directory (`project.rs`)
-- [ ] CLI: `init` / `add` / `list` / `search` / `update` / `delete` (`cli.rs`)
+- [x] Store: open, migrate, CRUD, search (`store.rs`)
+- [x] Project resolution from working directory (`project.rs`)
+- [x] CLI: `init` / `add` / `list` / `search` / `update` / `delete` (`cli.rs`)
 - [ ] Git source: ingest commit messages
 - [ ] MCP server so assistants can query memory directly
 - [ ] `CLAUDE.md` generator
